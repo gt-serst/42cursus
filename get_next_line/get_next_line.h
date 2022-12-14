@@ -1,16 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_get_next_line.c                                 :+:      :+:    :+:   */
+/*   get_next_line.h                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: gt-serst <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/12/08 16:45:37 by gt-serst          #+#    #+#             */
-/*   Updated: 2022/12/08 16:57:42 by gt-serst         ###   ########.fr       */
+/*   Created: 2022/12/12 12:27:34 by gt-serst          #+#    #+#             */
+/*   Updated: 2022/12/12 13:20:07 by gt-serst         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-char	*get_next_line(int fd)
-{
-	
-}
+#ifndef GET_NEXT_LINE_H
+# define GET_NEXT_LINE_H
+
+# include <stdlib.h>
+# include <unistd.h>
+# include <fcntl.h>
+# include <stdio.h>
+
+#endif
