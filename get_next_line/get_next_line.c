@@ -1,80 +1,87 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_get_next_line.c                                 :+:      :+:    :+:   */
+/*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: gt-serst <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/12/08 16:45:37 by gt-serst          #+#    #+#             */
-/*   Updated: 2022/12/14 19:03:34 by gt-serst         ###   ########.fr       */
+/*   Created: 2022/12/15 15:56:37 by gt-serst          #+#    #+#             */
+/*   Updated: 2022/12/15 20:31:33 by gt-serst         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-char	*ft_strncpy(char *dest, char *src, unsigned int n);
-char	*ft_strcpy(char *dest, char *src);
-void	ft_putnbr_fd(int n, int fd);
-void	ft_putstr_fd(char *s, int fd);
-
-int	ft_check_char(char c)
+int	ft_check_next_line(char	*content)
 {
-	if (c != '\n')
-		return (1);
+	int	i;
+
+	i = 0;
+	while (content[i] && content[i] != '\0')
+	{
+		if (content[i] != '\n')
+			i++;
+		else
+			return (i);
+	}
 	return (0);
 }
 
-char	*ft_chars_add(char *content, char *buf, int index)
+char	*ft_file_read(char *str, char *stack, int fd, int size)
 {
-	char	*tmp;
+	int 			len;
+	static char		buf[BUFFER_SIZE + 1];
 
-	tmp = malloc(sizeof(char) * (index + 1));
-	if (!tmp)
-		return (NULL);
-	tmp = ft_strncpy(tmp, content, index);
-	free(content);
-	ft_strcpy(tmp + index, buf);
-	content = tmp;
-	content[index] = '\0';
-	//printf("2");
-	//printf("%s", content);
-	return (content);
+	len = read(fd, buf, BUFFER_SIZE);
+	size += len;
+	if (ft_check_next_line(buf) == 0)
+	{
+		str = ft_strjoin(str, buf);
+		ft_file_read(str, stack, fd, size);
+	}
+	str = ft_substr(buf, size - len, ft_check_next_line(buf) + 1);
+	stack = ft_substr(buf, ft_check_next_line(buf) + 1, size);
+	printf("Stack : %s", stack);
+	return (str);
 }
 
-char	*ft_chars_read(int fd)
+char	*ft_stack_read(char	*str, char *stack, int fd)
 {
-	static char	buf[1];
-	char		*content;
-	int			index;
+	int	len;
 
-	read(fd, buf, 1);
-	if (buf[0] == '\0')
-		return (NULL);
-	content = malloc(sizeof(char));
-	if (!content)
-		return (NULL);
-	index = 0;
-	while (ft_check_char(buf[0]) == 1)
+	printf("3");
+	len = read(fd, stack, BUFFER_SIZE);
+	if (ft_check_next_line(stack) == 0)
 	{
-		//printf("1");
-		content = ft_chars_add(content, buf, index);
-		//printf("%s", content);
-		index++;
-		read(fd, buf, 1);
+		str = ft_strjoin(str, stack);
+		free(stack);
+		stack = NULL;
+		printf("1");
+		str = ft_file_read(str, stack, fd, 0);
 	}
-	if (ft_check_char(buf[0] == 0))
-		content = ft_chars_add(content, buf, index);
-	//printf("%s", content);
-	return (content);
+	else
+	{
+		printf("2");
+		str = ft_substr(stack, 0, ft_check_next_line(stack) + 1);
+		stack = ft_substr(stack, ft_check_next_line(stack) + 1, len);
+	}
+	return (str);
 }
 
 char	*get_next_line(int fd)
 {
-	char	*content;
+	char		*str;
+	static char *stack;
 
+	printf("Debut d'appel :\n");
+	printf("%s\n", stack);
+	str = NULL;
 	if (fd < 0)
 		return (NULL);
-	content = ft_chars_read(fd);
-	//printf("%s", content);
-	return (content);
+	if (stack)
+		str = ft_stack_read(str, stack, fd);
+	else
+		str = ft_file_read(str, stack, fd, 0);
+	printf("Str : %s", str);
+	return (str);
 }

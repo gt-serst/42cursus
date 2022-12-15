@@ -6,54 +6,28 @@
 /*   By: gt-serst <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/12 13:01:12 by gt-serst          #+#    #+#             */
-/*   Updated: 2022/12/14 18:52:40 by gt-serst         ###   ########.fr       */
+/*   Updated: 2022/12/15 19:26:55 by gt-serst         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-void	ft_putchar_fd(char c, int fd)
+int	ft_strlen(const char *s)
 {
-	write(fd, &c, 1);
-}
+	int	tmp;
 
-void	ft_putstr_fd(char *s, int fd)
-{
-	unsigned int	tmp;
-
-	if (!s)
-		return ;
 	tmp = 0;
 	while (s[tmp] != '\0')
-	{
-		write(fd, &s[tmp], 1);
 		tmp++;
-	}
-}
-
-void	ft_putnbr_fd(int n, int fd)
-{
-	if (n == -2147483648)
-		write(fd, "-2147483648", 11);
-	else if (n < 0)
-	{
-		n = -n;
-		write(fd, "-", 1);
-		ft_putnbr_fd(n, fd);
-	}
-	else if (n > 9)
-	{
-		ft_putnbr_fd(n / 10, fd);
-		ft_putnbr_fd(n % 10, fd);
-	}
-	else
-		ft_putchar_fd(n + 48, fd);
+	return (tmp);
 }
 
 char	*ft_strncpy(char *dest, char *src, unsigned int n)
 {
 	unsigned int		i;
 
+	if (!dest || !src)
+		return (NULL);
 	i = 0;
 	while (*(src + i) != '\0' && i < n)
 	{
@@ -68,16 +42,41 @@ char	*ft_strncpy(char *dest, char *src, unsigned int n)
 	return (dest);
 }
 
-char	*ft_strcpy(char *dest, char *src)
+char	*ft_substr(char const *s, unsigned int start, int len)
 {
-	int		n;
+	int		tmp;
+	char	*substr;
 
-	n = 0;
-	while (*(src + n) != '\0')
+	if (!s)
+		return (NULL);
+	substr = malloc(sizeof(char) * (len - start + 1));
+	if (!substr)
+		return (NULL);
+	tmp = 0;
+	while (tmp < len && s[start])
+		substr[tmp++] = s[start++];
+	substr[tmp] = '\0';
+	return (substr);
+}
+
+char	*ft_strjoin(char const *s1, char const *s2)
+{
+	int		tmp;
+	int		len;
+	char	*str;
+
+	if (!s1 || !s2)
+		return (NULL);
+	len = ft_strlen(s1);
+	str = malloc(sizeof(char) * (len + ft_strlen(s2)) + 1);
+	if (!str)
+		return (NULL);
+	tmp = 0;
+	while (s2[tmp] != '\0')
 	{
-		*(dest + n) = *(src + n);
-		n++;
+		str[len + tmp] = s2[tmp];
+		tmp++;
 	}
-	*(dest + n) = '\0';
-	return (dest);
+	str[tmp + len] = '\0';
+	return (str);
 }
