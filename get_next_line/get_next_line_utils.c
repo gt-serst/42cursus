@@ -6,7 +6,7 @@
 /*   By: gt-serst <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/12 13:01:12 by gt-serst          #+#    #+#             */
-/*   Updated: 2022/12/15 19:26:55 by gt-serst         ###   ########.fr       */
+/*   Updated: 2022/12/16 18:26:00 by gt-serst         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,30 +16,12 @@ int	ft_strlen(const char *s)
 {
 	int	tmp;
 
+	if (!s)
+		return (0);
 	tmp = 0;
 	while (s[tmp] != '\0')
 		tmp++;
 	return (tmp);
-}
-
-char	*ft_strncpy(char *dest, char *src, unsigned int n)
-{
-	unsigned int		i;
-
-	if (!dest || !src)
-		return (NULL);
-	i = 0;
-	while (*(src + i) != '\0' && i < n)
-	{
-		*(dest + i) = *(src + i);
-		i++;
-	}	
-	while (i < n)
-	{
-		*(dest + i) = '\0';
-		i++;
-	}
-	return (dest);
 }
 
 char	*ft_substr(char const *s, unsigned int start, int len)
@@ -72,11 +54,17 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	if (!str)
 		return (NULL);
 	tmp = 0;
+	while (s1[tmp] != '\0')
+	{
+		str[tmp] = s1[tmp];
+		tmp++;
+	}
+	tmp = 0;
 	while (s2[tmp] != '\0')
 	{
 		str[len + tmp] = s2[tmp];
 		tmp++;
 	}
-	str[tmp + len] = '\0';
+	str[len + tmp] = '\0';
 	return (str);
 }
