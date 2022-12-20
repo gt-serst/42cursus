@@ -51,15 +51,15 @@ char	*ft_stack_read(char *stack)
 
 char	*ft_file_read(char *str, char **stack, int fd, int size)
 {
-	int				len;
+	int			len;
 	char			buf[BUFFER_SIZE + 1];
 	char			*substr;
 
 	len = read(fd, buf, BUFFER_SIZE);
-	printf("Ce que je lis: %s", buf);
 	if (len == 0)
 		return (NULL);
 	size += len;
+	buf[len] = '\0';
 	if (ft_check_next_line(buf) == 0)
 	{
 		str = ft_strjoin(str, buf);
@@ -67,12 +67,9 @@ char	*ft_file_read(char *str, char **stack, int fd, int size)
 	}
 	else
 	{
-		printf("Ce qui va être envoyé: %s", buf);
 		substr = ft_substr(buf, 0, ft_check_next_line(buf) + 1);
 		str = ft_strjoin(str, substr);
-		printf("Size: %d\n", size);
-		*stack = ft_substr(buf, ft_check_next_line(buf) + 1, ft_strlen(buf));
-		printf("Ce qui sort de la fonction: %s", *stack);
+		*stack = ft_substr(buf, ft_check_next_line(buf) + 1, BUFFER_SIZE);
 	}
 	return (str);
 }
@@ -99,9 +96,9 @@ char	*get_next_line(int fd)
 		printf("La stack est vide\n");
 		str = ft_file_read(str, &stack, fd, 0);
 	}
-	printf("Str: %s", str);
-	printf("Stack: %s", stack);
-	printf("Fin de la fonction\n");
+	printf("Str: %s\n", str);
+	printf("Stack: %s\n", stack);
+	printf("Fin de la fonction\n\n");
 	return (str);
 }
 
