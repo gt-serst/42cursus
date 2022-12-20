@@ -27,6 +27,7 @@ int	main(void)
 	get_next_line(fd);
 	get_next_line(fd);
 	get_next_line(fd);
+	get_next_line(fd);
 	//free(content);
 	//system("leaks a.out");
 	//printf("%s", content);

@@ -27,16 +27,41 @@ int	ft_strlen(const char *s)
 char	*ft_substr(char const *s, unsigned int start, int len)
 {
 	int		tmp;
+	int		srclen;
 	char	*substr;
 
 	if (!s)
 		return (NULL);
-	substr = malloc(sizeof(char) * (len - start + 1));
+	printf("Début fonction Substr():\n");
+	printf("Valeur de Start: %d\n", start);
+	printf("Valeur de Len: %d\n", len);
+	srclen = ft_strlen(s);
+	printf("Taille de srclen: %d\n", srclen);
+	if (start > srclen)
+	{
+		substr = malloc(sizeof(char) * 1);
+		if (!substr)
+			return (NULL);
+		substr[0] = '\0';
+		return (substr);
+	}
+	if (start + len > srclen)
+		len = srclen - start;
+	substr = malloc(sizeof(char) * (len + 1));
+	printf("Taille du malloc: %d\n", len + 1);
 	if (!substr)
 		return (NULL);
 	tmp = 0;
-	while (tmp < len && s[start])
-		substr[tmp++] = s[start++];
+	printf("Premier char dans substr: %c\n", s[start]);
+	while (tmp < len && s[start + tmp])
+	{
+		substr[tmp] = s[start + tmp];
+		printf("Char dans srclen: %c\n", substr[tmp]);
+		printf("Char dans substr: %c\n", s[start + tmp]);
+		printf("Valeur var tmp: %d\n", tmp);
+		printf("Valeur var len: %d\n", len);
+		tmp++;
+	}
 	substr[tmp] = '\0';
 	return (substr);
 }

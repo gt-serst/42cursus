@@ -5,18 +5,6 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: gt-serst <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/12/16 16:57:31 by gt-serst          #+#    #+#             */
-/*   Updated: 2022/12/16 19:07:20 by gt-serst         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: gt-serst <marvin@42.fr>                    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/15 15:56:37 by gt-serst          #+#    #+#             */
 /*   Updated: 2022/12/16 16:56:40 by gt-serst         ###   ########.fr       */
 /*                                                                            */
@@ -61,37 +49,31 @@ char	*ft_stack_read(char *stack)
 	return (stack);
 }
 
-char	*ft_file_read(char *str, static char *stack, int fd, int size)
+char	*ft_file_read(char *str, char **stack, int fd, int size)
 {
 	int				len;
-	char			buf[BUFFER_SIZE];
+	char			buf[BUFFER_SIZE + 1];
 	char			*substr;
 
-/*
-	if (stack)
-	{
-		str = ft_str_read(str, stack);
-		stack = ft_stack_read(stack);
-	}
-	if (stack)
-		return (str);
-*/
 	len = read(fd, buf, BUFFER_SIZE);
+	printf("Ce que je lis: %s", buf);
 	if (len == 0)
 		return (NULL);
 	size += len;
 	if (ft_check_next_line(buf) == 0)
 	{
 		str = ft_strjoin(str, buf);
-		ft_file_read(str, stack, fd, size);
+		str = ft_file_read(str, stack, fd, size);
 	}
 	else
 	{
+		printf("Ce qui va être envoyé: %s", buf);
 		substr = ft_substr(buf, 0, ft_check_next_line(buf) + 1);
 		str = ft_strjoin(str, substr);
-		stack = ft_substr(buf, ft_check_next_line(buf) + 1, size);
+		printf("Size: %d\n", size);
+		*stack = ft_substr(buf, ft_check_next_line(buf) + 1, ft_strlen(buf));
+		printf("Ce qui sort de la fonction: %s", *stack);
 	}
-	printf("Str before function return: %s", str);
 	return (str);
 }
 
@@ -105,17 +87,21 @@ char	*get_next_line(int fd)
 	if  (!str)
 		return (NULL);
 	str[0] = '\0';
-	if (fd < 0)
+	if (fd < 0 || BUFFER_SIZE < 1)
 		return (NULL);
 	if (stack)
 	{
 		str = ft_str_read(str, stack);
 		stack = ft_stack_read(stack);
 	}
-	printf("Stack before ft_file_read(): %s", stack);
 	if (!stack)
-		str = ft_file_read(str, stack, fd, 0);
+	{
+		printf("La stack est vide\n");
+		str = ft_file_read(str, &stack, fd, 0);
+	}
 	printf("Str: %s", str);
 	printf("Stack: %s", stack);
+	printf("Fin de la fonction\n");
 	return (str);
 }
+
