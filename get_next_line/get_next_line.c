@@ -12,7 +12,7 @@
 
 #include "get_next_line.h"
 
-int	ft_check_next_line(char	*buf)
+static int	ft_check_next_line(char	*buf)
 {
 	int	c;
 
@@ -22,54 +22,79 @@ int	ft_check_next_line(char	*buf)
 		if (buf[c] != '\n')
 			c++;
 		else
-			return (c);
+			return (c + 1);
 	}
 	return (0);
 }
 
-char	*ft_str_read(char	*str, char *stack)
+static char	*ft_str_read(char	*str, char *stack)
 {
+	char	*tmp;
+
 	if (ft_check_next_line(stack) == 0)
 		str = ft_strjoin(str, stack);
 	else
-		str = ft_substr(stack, 0, ft_check_next_line(stack) + 1);
+	{
+		tmp = ft_substr(stack, 0, ft_check_next_line(stack));
+		free(str);
+		str = tmp;
+	}
 	return (str);
 }
 
-char	*ft_stack_read(char *stack)
+static char	*ft_stack_read(char *stack)
 {
+	char	*tmp;
+
 	if (ft_check_next_line(stack) == 0)
 	{
 		free(stack);
 		stack = NULL;
 	}
 	else
-		stack = ft_substr(stack, ft_check_next_line(stack) + 1, \
+	{
+		tmp = ft_substr(stack, ft_check_next_line(stack), \
 				ft_strlen(stack));
+		free(stack);
+		stack = tmp;
+	}
 	return (stack);
 }
 
-char	*ft_file_read(char *str, char **stack, int fd, int size)
+static char	*ft_check_end_of_file(char *str)
 {
-	int			len;
-	char			buf[BUFFER_SIZE + 1];
-	char			*substr;
+	if (!(*str))
+	{
+		free(str);
+		return (NULL);
+	}
+	return (str);
+}
+
+static char	*ft_file_read(char *str, char **stack, int fd)
+{
+	int	len;
+	char	buf[BUFFER_SIZE + 1];
+	char	*substr;
 
 	len = read(fd, buf, BUFFER_SIZE);
-	if (len == 0)
-		return (NULL);
-	size += len;
+	//printf("Buf: %s\n", buf);
+	if (len <= 0)
+		return (ft_check_end_of_file(str));
 	buf[len] = '\0';
 	if (ft_check_next_line(buf) == 0)
 	{
+		//printf("Buf: %s\n", buf);
 		str = ft_strjoin(str, buf);
-		str = ft_file_read(str, stack, fd, size);
+		//printf("Str: %s\n", str);
+		str = ft_file_read(str, stack, fd);
 	}
 	else
 	{
-		substr = ft_substr(buf, 0, ft_check_next_line(buf) + 1);
+		substr = ft_substr(buf, 0, ft_check_next_line(buf));
 		str = ft_strjoin(str, substr);
-		*stack = ft_substr(buf, ft_check_next_line(buf) + 1, BUFFER_SIZE);
+		free(substr);
+		*stack = ft_substr(buf, ft_check_next_line(buf), BUFFER_SIZE);
 	}
 	return (str);
 }
@@ -79,7 +104,7 @@ char	*get_next_line(int fd)
 	char		*str;
 	static char	*stack;
 
-	printf("Lancement de la fonction :\n");
+	//printf("Lancement de la fonction :\n");
 	str = malloc(sizeof(char));
 	if  (!str)
 		return (NULL);
@@ -93,12 +118,11 @@ char	*get_next_line(int fd)
 	}
 	if (!stack)
 	{
-		printf("La stack est vide\n");
-		str = ft_file_read(str, &stack, fd, 0);
+		//printf("La stack est vide\n");
+		str = ft_file_read(str, &stack, fd);
 	}
-	printf("Str: %s\n", str);
-	printf("Stack: %s\n", stack);
-	printf("Fin de la fonction\n\n");
+	//printf("Str: %s\n", str);
+	//printf("Stack: %s\n", stack);
+	//printf("Fin de la fonction\n\n");
 	return (str);
 }
-

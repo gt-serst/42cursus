@@ -19,8 +19,8 @@
 # include <stdio.h>
 
 char	*get_next_line(int fd);
-int		ft_strlen(const char *s);
-char	*ft_substr(char const *s, unsigned int start, int len);
-char	*ft_strjoin(char const *s1, char const *s2);
+size_t	ft_strlen(char *s);
+char	*ft_substr(char *s, unsigned int start, int len);
+char	*ft_strjoin(char *s1, char *s2);
 
 #endif

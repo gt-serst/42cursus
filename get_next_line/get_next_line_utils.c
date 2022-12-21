@@ -12,9 +12,9 @@
 
 #include "get_next_line.h"
 
-int	ft_strlen(const char *s)
+size_t	ft_strlen(char *s)
 {
-	int	tmp;
+	size_t	tmp;
 
 	if (!s)
 		return (0);
@@ -24,27 +24,41 @@ int	ft_strlen(const char *s)
 	return (tmp);
 }
 
-char	*ft_substr(char const *s, unsigned int start, int len)
+char	*ft_strdup(char *s1)
+{
+	int	tmp;
+	char	*ptr;
+	
+	tmp = 0;
+	while (s1[tmp] != '\0')
+		tmp++;
+	ptr = malloc(sizeof(char) * (tmp + 1));
+	if (!ptr)
+		return (NULL);
+	tmp = 0;
+	while (s1[tmp] != '\0')
+	{
+		ptr[tmp] = s1[tmp];
+		tmp++;
+	}
+	ptr[tmp] = '\0';
+	return (ptr);
+}
+
+char	*ft_substr(char *s, unsigned int start, int len)
 {
 	int		tmp;
-	unsigned int	srclen;
 	char		*substr;
 
 	if (!s)
 		return (NULL);
-	srclen = ft_strlen(s);
-	if (start > srclen)
+	if (start > ft_strlen(s))
 	{
-		substr = malloc(sizeof(char) * 1);
-		if (!substr)
-			return (NULL);
-		substr[0] = '\0';
-		return (substr);
+		return (ft_strdup(""));
 	}
-	if (start + len > srclen)
-		len = srclen - start;
+	if ((start + len) > ft_strlen(s))
+		len = ft_strlen(s) - start;
 	substr = malloc(sizeof(char) * (len + 1));
-	printf("Taille du malloc: %d\n", len + 1);
 	if (!substr)
 		return (NULL);
 	tmp = 0;
@@ -54,34 +68,27 @@ char	*ft_substr(char const *s, unsigned int start, int len)
 		tmp++;
 	}
 	substr[tmp] = '\0';
-	printf("Substr: %s\n", substr);
 	return (substr);
 }
 
-char	*ft_strjoin(char const *s1, char const *s2)
+char	*ft_strjoin(char *s1, char *s2)
 {
-	int		tmp;
-	int		len;
+	int	i;
+	int	j;
 	char	*str;
-
+	
 	if (!s1 || !s2)
 		return (NULL);
-	len = ft_strlen(s1);
-	str = malloc(sizeof(char) * (len + ft_strlen(s2)) + 1);
+	str = malloc(sizeof(char) * (ft_strlen(s1) + ft_strlen(s2)) + 1);
 	if (!str)
 		return (NULL);
-	tmp = 0;
-	while (s1[tmp] != '\0')
-	{
-		str[tmp] = s1[tmp];
-		tmp++;
-	}
-	tmp = 0;
-	while (s2[tmp] != '\0')
-	{
-		str[len + tmp] = s2[tmp];
-		tmp++;
-	}
-	str[len + tmp] = '\0';
+	i = -1;
+	while (s1[++i])
+		str[i] = s1[i];
+	j = -1;
+	while (s2[++j])
+		str[i + j] = s2[j];
+	str[i + j] = '\0';
+	free(s1);
 	return (str);
 }

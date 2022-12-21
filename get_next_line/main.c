@@ -14,22 +14,20 @@
 
 int	main(void)
 {
-	int		fd;
-	//char	*content;
-
+	int	fd;
+	int	i;
+	char	*content;
+	
 	fd = open("text.txt", O_RDONLY);
-	get_next_line(fd);
-	get_next_line(fd);
-	get_next_line(fd);
-	get_next_line(fd);
-	get_next_line(fd);
-	get_next_line(fd);
-	get_next_line(fd);
-	get_next_line(fd);
-	get_next_line(fd);
-	get_next_line(fd);
-	//free(content);
+	i = 0;
+	//system("leaks a.out");
+	while (i < 12)
+	{
+		content = get_next_line(fd);
+		printf("New line: %s\n", content);
+		free(content);
+		i++;
+	}
 	system("leaks a.out");
-	//printf("%s", content);
 	return (0);
 }
