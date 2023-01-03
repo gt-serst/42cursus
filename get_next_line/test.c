@@ -6,7 +6,7 @@
 /*   By: gt-serst <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/15 15:56:37 by gt-serst          #+#    #+#             */
-/*   Updated: 2023/01/03 19:35:11 by gt-serst         ###   ########.fr       */
+/*   Updated: 2023/01/03 20:30:28 by gt-serst         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,16 +46,6 @@ static char	*ft_stack_read(char *stack)
 	return (stack);
 }
 
-static char	*ft_check_end_of_file(char *str, int len)
-{
-	if (!(*str) || len == -1)
-	{
-		free(str);
-		return (NULL);
-	}
-	return (str);
-}
-
 static char	*ft_file_read(char *str, char **stack, int fd)
 {
 	int		len;
@@ -63,15 +53,19 @@ static char	*ft_file_read(char *str, char **stack, int fd)
 	char	*substr;
 
 	len = read(fd, buf, BUFFER_SIZE);
-	if (len <= 0)
-		return (ft_check_end_of_file(str, len));
 	buf[len] = '\0';
-	if (ft_check_next_line(buf) == 0)
+	while (ft_check_next_line(buf) == 0 && len != 0)
 	{
+		len = read(fd, buf, BUFFER_SIZE);
+		if (len == -1)
+		{
+			free(str);
+			return (NULL);
+		}
+		buf[len] = '\0';
 		str = ft_strjoin(str, buf);
-		str = ft_file_read(str, stack, fd);
 	}
-	else
+	if (ft_check_next_line(buf) == 1)
 	{
 		substr = ft_substr(buf, 0, ft_check_next_line(buf));
 		str = ft_strjoin(str, substr);

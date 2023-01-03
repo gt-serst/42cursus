@@ -6,7 +6,7 @@
 /*   By: gt-serst <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/12 12:20:33 by gt-serst          #+#    #+#             */
-/*   Updated: 2022/12/16 17:37:19 by gt-serst         ###   ########.fr       */
+/*   Updated: 2023/01/03 15:22:13 by gt-serst         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,12 @@
 
 int	main(void)
 {
-	int	fd;
-	int	i;
+	int		fd;
+	int		i;
 	char	*content;
-	
+
 	fd = open("text.txt", O_RDONLY);
 	i = 0;
-	//system("leaks a.out");
 	while (i < 12)
 	{
 		content = get_next_line(fd);
