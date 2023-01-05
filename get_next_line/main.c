@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gt-serst <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: gt-serst <gt-serst@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/12 12:20:33 by gt-serst          #+#    #+#             */
-/*   Updated: 2023/01/03 15:22:13 by gt-serst         ###   ########.fr       */
+/*   Updated: 2023/01/05 18:50:38 by gt-serst         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,18 +15,25 @@
 int	main(void)
 {
 	int		fd;
-	int		i;
 	char	*content;
+	char	*name;
 
-	fd = open("text.txt", O_RDONLY);
-	i = 0;
-	while (i < 12)
-	{
-		content = get_next_line(fd);
-		printf("New line: %s\n", content);
-		free(content);
-		i++;
-	}
+	name = "empty.txt";
+	fd = open(name, O_RDONLY);
+	printf("fd:%d\n", fd);
+	content = get_next_line(fd);
+	content = get_next_line(fd);
+	content = get_next_line(fd);
+/*
+	close(fd);
+	fd = open(name, O_RDONLY);
+	printf("fd:%d\n", fd);
+	content = get_next_line(fd);
+	content = get_next_line(fd);
+	content = get_next_line(fd);
+	content = get_next_line(fd);
+*/
+	free(content);
 	system("leaks a.out");
 	return (0);
 }

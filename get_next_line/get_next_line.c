@@ -3,82 +3,38 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gt-serst <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: gt-serst <gt-serst@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/15 15:56:37 by gt-serst          #+#    #+#             */
-/*   Updated: 2023/01/03 19:35:11 by gt-serst         ###   ########.fr       */
+/*   Updated: 2023/01/05 18:49:59 by gt-serst         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-static char	*ft_str_read(char	*str, char *stack)
-{
-	char	*tmp;
-
-	if (ft_check_next_line(stack) == 0)
-		str = ft_strjoin(str, stack);
-	else
-	{
-		tmp = ft_substr(stack, 0, ft_check_next_line(stack));
-		free(str);
-		str = tmp;
-	}
-	return (str);
-}
-
-static char	*ft_stack_read(char *stack)
-{
-	char	*tmp;
-
-	if (ft_check_next_line(stack) == 0)
-	{
-		free(stack);
-		stack = NULL;
-	}
-	else
-	{
-		tmp = ft_substr(stack, ft_check_next_line(stack),
-				ft_strlen(stack));
-		free(stack);
-		stack = tmp;
-	}
-	return (stack);
-}
-
-static char	*ft_check_end_of_file(char *str, int len)
-{
-	if (!(*str) || len == -1)
-	{
-		free(str);
-		return (NULL);
-	}
-	return (str);
-}
-
-static char	*ft_file_read(char *str, char **stack, int fd)
+char	*ft_read_file(int fd, char *stack)
 {
 	int		len;
-	char	buf[BUFFER_SIZE + 1];
-	char	*substr;
+	char	*buf;
 
-	len = read(fd, buf, BUFFER_SIZE);
-	if (len <= 0)
-		return (ft_check_end_of_file(str, len));
-	buf[len] = '\0';
-	if (ft_check_next_line(buf) == 0)
+	buf = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1));
+	if (!buf)
+		return (NULL);
+	len = 1;
+	while (!ft_strchr(stack, '\n') && len != 0)
 	{
-		str = ft_strjoin(str, buf);
-		str = ft_file_read(str, stack, fd);
+		len = read(fd, buf, BUFFER_SIZE);
+		if (len == -1)
+		{
+			free(buf);
+			free(stack);
+			return (NULL);
+		}
+		buf[len] = '\0';
+		stack = ft_strjoin(stack, buf);
 	}
-	else
-	{
-		substr = ft_substr(buf, 0, ft_check_next_line(buf));
-		str = ft_strjoin(str, substr);
-		free(substr);
-		*stack = ft_substr(buf, ft_check_next_line(buf), BUFFER_SIZE);
-	}
-	return (str);
+	free(buf);
+	return (stack);
 }
 
 char	*get_next_line(int fd)
@@ -86,21 +42,16 @@ char	*get_next_line(int fd)
 	char		*str;
 	static char	*stack;
 
-	str = malloc(sizeof(char));
-	if (!str)
-		return (NULL);
-	str[0] = '\0';
+	//possible de faire une protection au départ pour remettre la stack à nulle
+	//si elle ne l'est pas lors du prochain appel de la fonction
 	if (fd < 0 || BUFFER_SIZE < 1)
-	{
-		free(str);
 		return (NULL);
-	}
-	if (stack)
-	{
-		str = ft_str_read(str, stack);
-		stack = ft_stack_read(stack);
-	}
+	stack = ft_read_file(fd, stack);
 	if (!stack)
-		str = ft_file_read(str, &stack, fd);
+		return (NULL);
+	str = ft_get_line(stack);
+	stack = ft_get_stack(stack);
+	printf("New line: %s\n", str);
+	printf("Stack: %s\n", stack);
 	return (str);
 }

@@ -6,7 +6,7 @@
 /*   By: gt-serst <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/12 12:27:34 by gt-serst          #+#    #+#             */
-/*   Updated: 2023/01/03 18:14:08 by gt-serst         ###   ########.fr       */
+/*   Updated: 2023/01/05 12:04:31 by gt-serst         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,10 +19,11 @@
 # include <stdio.h>
 
 char	*get_next_line(int fd);
+char	*ft_read_file(int fd, char *stack);
 size_t	ft_strlen(char *s);
-char	*ft_strdup(char *s);
-char	*ft_substr(char *s, unsigned int start, int len);
+char	*ft_strchr(char *s, int c);
 char	*ft_strjoin(char *str, char *stack);
-int		ft_check_next_line(char *buf);
+char	*ft_get_stack(char *stack);
+char	*ft_get_line(char *stack);
 
 #endif

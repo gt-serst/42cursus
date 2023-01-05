@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line_utils.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gt-serst <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: gt-serst <gt-serst@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/12 13:01:12 by gt-serst          #+#    #+#             */
-/*   Updated: 2023/01/03 19:43:12 by gt-serst         ###   ########.fr       */
+/*   Updated: 2023/01/05 18:48:09 by gt-serst         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,87 +24,116 @@ size_t	ft_strlen(char *s)
 	return (tmp);
 }
 
-char	*ft_strdup(char *s)
+char	*ft_strchr(char *s, int c)
 {
-	int		tmp;
-	char	*ptr;
+	int	i;
 
-	tmp = 0;
-	while (s[tmp] != '\0')
-		tmp++;
-	ptr = (char *)malloc(sizeof(char) * (tmp + 1));
-	if (!ptr)
-		return (NULL);
-	tmp = 0;
-	while (s[tmp] != '\0')
-	{
-		ptr[tmp] = s[tmp];
-		tmp++;
-	}
-	ptr[tmp] = '\0';
-	return (ptr);
-}
-
-char	*ft_substr(char *s, unsigned int start, int len)
-{
-	int		tmp;
-	char	*substr;
-
+	i = 0;
 	if (!s)
-		return (NULL);
-	if (start > ft_strlen(s))
-		return (ft_strdup(""));
-	if ((start + len) > ft_strlen(s))
-		len = ft_strlen(s) - start;
-	substr = (char *)malloc(sizeof(char) * (len + 1));
-	if (!substr)
-		return (NULL);
-	tmp = 0;
-	while (tmp < len && s[start + tmp])
+		return (0);
+	if (c == '\0')
+		return ((char *)&s[ft_strlen(s)]);
+	while (s[i] != '\0')
 	{
-		substr[tmp] = s[start + tmp];
-		tmp++;
+		if (s[i] == (char) c)
+			return ((char *)&s[i]);
+		i++;
 	}
-	substr[tmp] = '\0';
-	return (substr);
+	return (0);
 }
 
-char	*ft_strjoin(char *str, char *stack)
+char	*ft_strjoin(char *stack, char *buf)
 {
 	size_t	i;
 	size_t	j;
 	char	*strjoin;
 
-	if (!str)
-		return (ft_strdup(""));
-	if (!str || !stack)
+	if (!stack)
+	{
+		stack = (char *)malloc(sizeof(char) * 1);
+		if (!stack)
+			return (NULL);
+		stack[0] = '\0';
+		//si le malloc n'est pas protégé, la fonction seg fault
+		//si on le protège le test NULL est KO
+	}
+	if (!buf)
 		return (NULL);
-	strjoin = (char *)malloc(sizeof(char) * (ft_strlen(str)
-				+ ft_strlen(stack)) + 1);
+	strjoin = (char *)malloc(sizeof(char) * (ft_strlen(stack)
+				+ ft_strlen(buf)) + 1);
 	if (!strjoin)
 		return (NULL);
 	i = -1;
-	while (str[++i] != '\0')
-		strjoin[i] = str[i];
+	while (stack[++i] != '\0')
+			strjoin[i] = stack[i];
 	j = -1;
-	while (stack[++j] != '\0')
-		strjoin[i + j] = stack[j];
-	strjoin[ft_strlen(str) + ft_strlen(stack)] = '\0';
-	free(str);
+	while (buf[++j] != '\0')
+		strjoin[i + j] = buf[j];
+	strjoin[ft_strlen(stack) + ft_strlen(buf)] = '\0';
+	free(stack);
 	return (strjoin);
 }
 
-int	ft_check_next_line(char	*buf)
+char	*ft_get_stack(char *stack)
 {
-	int	c;
+	int		i;
+	int		j;
+	char	*new_stack;
 
-	c = 0;
-	while (buf[c] && buf[c] != '\0')
+	i = 0;
+	while (stack[i] && stack[i] != '\n')
+		i++;
+	//proctection si la ligne finit par '\0' mais attention !!!
+	//si la ligne finit par '\n' alors un malloc de taille 1 sera alloué dans la stack et la stack finale
+	//vaudra '\n'
+	if (!stack[i])
 	{
-		if (buf[c] != '\n')
-			c++;
-		else
-			return (c + 1);
+		free(stack);
+		return (NULL);
 	}
-	return (0);
+	new_stack = (char *)malloc(sizeof(char) * (ft_strlen(stack) - i + 1));
+	if (!new_stack)
+		return (NULL);
+	i++;
+	j = 0;
+	while (stack[i])
+		new_stack[j++] = stack[i++];
+	new_stack[j] = '\0';
+	//la fonction ne rentre pas dans le while mais place un '\0'
+	//dans la stack alors qu'elle devrait être nulle -> en conséquence
+	//un élément ne sera pas free à la fin du programme
+	free(stack);
+	return (new_stack);
+}
+
+char	*ft_get_line(char *stack)
+{
+	int		i;
+	char	*str;
+
+	i = 0;
+	if (!stack[i])
+		return (NULL);
+	while (stack[i] && stack[i] != '\n')
+		i++;
+	//condition de malloc si le dernier char est un '\n' ou '\0'
+	if (stack[i] == '\n')
+		str = (char *)malloc(sizeof(char) * (i + 2));
+	else
+		str = (char *)malloc(sizeof(char) * (i + 1));
+	if (!str)
+		return (NULL);
+	i = 0;
+	while (stack[i] && stack[i] != '\n')
+	{
+		str[i] = stack[i];
+		i++;
+	}
+	if (stack[i] == '\n')
+	{
+		str[i] = stack[i];
+		i++;
+	}
+	str[i] = '\0';
+	return (str);
 }
