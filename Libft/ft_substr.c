@@ -6,26 +6,16 @@
 /*   By: gt-serst <gt-serst@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 13:35:49 by gt-serst          #+#    #+#             */
-/*   Updated: 2022/12/06 15:43:49 by gt-serst         ###   ########.fr       */
+/*   Updated: 2023/01/06 14:56:20 by gt-serst         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-static size_t	ft_malloc_allocation(char *str, size_t len)
-{
-	size_t	tmp;
-
-	tmp = 0;
-	while (str[tmp] && tmp < len)
-		tmp++;
-	return (tmp);
-}
-
 char	*ft_substr(char const *s, unsigned int start, size_t len)
 {
 	size_t	tmp;
-	size_t	malloc_size;
+	size_t	size;
 	char	*substr;
 
 	if (s[0] == '\0' || start > (unsigned int)ft_strlen(s))
@@ -36,8 +26,10 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 		substr[0] = '\0';
 		return (substr);
 	}
-	malloc_size = (ft_malloc_allocation((char *) s + start, len));
-	substr = (char *)malloc(sizeof(char) * (malloc_size + 1));
+	size = 0;
+	while (size < len && s[start + size] != '\0')
+		size++;
+	substr = (char *)malloc(sizeof(char) * (size + 1));
 	if (!substr)
 		return (NULL);
 	tmp = 0;
