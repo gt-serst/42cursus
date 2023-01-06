@@ -6,7 +6,7 @@
 /*   By: gt-serst <gt-serst@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/12 12:27:34 by gt-serst          #+#    #+#             */
-/*   Updated: 2023/01/06 17:23:27 by gt-serst         ###   ########.fr       */
+/*   Updated: 2023/01/06 14:00:25 by gt-serst         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,9 @@
 
 char	*get_next_line(int fd);
 size_t	ft_strlen(char *s);
-int		ft_strchr(char *s, int c);
-char	*ft_substr(char *s, unsigned int start, int len);
-char	*ft_strjoin(char *s1, char *s2);
+char	*ft_strchr(char *s, int c);
+char	*ft_strjoin(char *str, char *stack);
+char	*ft_get_stack(char *stack);
+char	*ft_get_line(char *stack);
 
 #endif

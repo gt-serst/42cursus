@@ -6,7 +6,7 @@
 /*   By: gt-serst <gt-serst@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/12 13:01:12 by gt-serst          #+#    #+#             */
-/*   Updated: 2023/01/05 18:48:09 by gt-serst         ###   ########.fr       */
+/*   Updated: 2023/01/06 17:58:51 by gt-serst         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,116 +24,80 @@ size_t	ft_strlen(char *s)
 	return (tmp);
 }
 
-char	*ft_strchr(char *s, int c)
+int	ft_strchr(char *s, int c)
 {
 	int	i;
 
 	i = 0;
 	if (!s)
 		return (0);
-	if (c == '\0')
-		return ((char *)&s[ft_strlen(s)]);
+	if (c == 0)
+		return (0);
 	while (s[i] != '\0')
 	{
-		if (s[i] == (char) c)
-			return ((char *)&s[i]);
+		if ((unsigned char)s[i] == (unsigned char)c)
+			return (i);
 		i++;
 	}
 	return (0);
 }
 
-char	*ft_strjoin(char *stack, char *buf)
+char	*ft_substr(char *s, unsigned int start, int len)
 {
-	size_t	i;
-	size_t	j;
-	char	*strjoin;
+	int		tmp;
+	int		size;
+	char	*substr;
 
-	if (!stack)
+	if (!s)
+		return (NULL);
+	if (s[0] == '\0' || start > (unsigned int)ft_strlen(s))
 	{
-		stack = (char *)malloc(sizeof(char) * 1);
-		if (!stack)
+		substr = malloc(sizeof(char) * 1);
+		if (!substr)
 			return (NULL);
-		stack[0] = '\0';
-		//si le malloc n'est pas protégé, la fonction seg fault
-		//si on le protège le test NULL est KO
+		substr[0] = '\0';
+		return (substr);
 	}
-	if (!buf)
+	size = 0;
+	while (size < len && s[start + size] != '\0')
+		size++;
+	substr = (char *)malloc(sizeof(char) * (size + 1));
+	if (!substr)
 		return (NULL);
-	strjoin = (char *)malloc(sizeof(char) * (ft_strlen(stack)
-				+ ft_strlen(buf)) + 1);
-	if (!strjoin)
-		return (NULL);
-	i = -1;
-	while (stack[++i] != '\0')
-			strjoin[i] = stack[i];
-	j = -1;
-	while (buf[++j] != '\0')
-		strjoin[i + j] = buf[j];
-	strjoin[ft_strlen(stack) + ft_strlen(buf)] = '\0';
-	free(stack);
-	return (strjoin);
+	tmp = 0;
+	while (tmp < len && s[start])
+		substr[tmp++] = s[start++];
+	substr[tmp] = '\0';
+	return (substr);
 }
 
-char	*ft_get_stack(char *stack)
+char	*ft_strjoin(char *s1, char *s2)
 {
+	char	*str;
+	size_t	size;
 	int		i;
 	int		j;
-	char	*new_stack;
 
-	i = 0;
-	while (stack[i] && stack[i] != '\n')
-		i++;
-	//proctection si la ligne finit par '\0' mais attention !!!
-	//si la ligne finit par '\n' alors un malloc de taille 1 sera alloué dans la stack et la stack finale
-	//vaudra '\n'
-	if (!stack[i])
+	if (!s1)
 	{
-		free(stack);
-		return (NULL);
+		s1 = malloc(sizeof(char));
+		if (!s1)
+			return (NULL);
+		s1[0] = '\0';
 	}
-	new_stack = (char *)malloc(sizeof(char) * (ft_strlen(stack) - i + 1));
-	if (!new_stack)
+	if (!s1 || !s2)
 		return (NULL);
-	i++;
-	j = 0;
-	while (stack[i])
-		new_stack[j++] = stack[i++];
-	new_stack[j] = '\0';
-	//la fonction ne rentre pas dans le while mais place un '\0'
-	//dans la stack alors qu'elle devrait être nulle -> en conséquence
-	//un élément ne sera pas free à la fin du programme
-	free(stack);
-	return (new_stack);
-}
-
-char	*ft_get_line(char *stack)
-{
-	int		i;
-	char	*str;
-
-	i = 0;
-	if (!stack[i])
-		return (NULL);
-	while (stack[i] && stack[i] != '\n')
-		i++;
-	//condition de malloc si le dernier char est un '\n' ou '\0'
-	if (stack[i] == '\n')
-		str = (char *)malloc(sizeof(char) * (i + 2));
-	else
-		str = (char *)malloc(sizeof(char) * (i + 1));
+	size = ft_strlen(s1) + ft_strlen(s2);
+	str = malloc(size * sizeof(char) + 1);
 	if (!str)
 		return (NULL);
 	i = 0;
-	while (stack[i] && stack[i] != '\n')
-	{
-		str[i] = stack[i];
-		i++;
-	}
-	if (stack[i] == '\n')
-	{
-		str[i] = stack[i];
-		i++;
-	}
-	str[i] = '\0';
+	j = 0;
+	while (s1[i])
+		str[j++] = s1[i++];
+	i = 0;
+	while (s2[i])
+		str[j++] = s2[i++];
+	str[j] = '\0';
 	return (str);
 }
