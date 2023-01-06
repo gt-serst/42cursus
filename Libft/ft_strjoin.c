@@ -6,40 +6,35 @@
 /*   By: geraudtserstevens <geraudtserstevens@st    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 14:34:30 by gt-serst          #+#    #+#             */
-/*   Updated: 2022/12/01 10:31:03 by geraudtsers      ###   ########.fr       */
+/*   Updated: 2023/01/06 15:21:35 by gt-serst         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-char	*ft_strjoin(char const *s1, char const *s2)
+char	*ft_strjoin(const char *s1, const char *s2)
 {
-	int		tmp;
-	int		len;
 	char	*str;
+	size_t	size;
+	int		i;
+	int		j;
 
 	if (!s1 || !s2)
 		return (NULL);
-	len = ft_strlen(s1);
-	str = malloc(sizeof(char) * (len + ft_strlen(s2)) + 1);
+	size = ft_strlen(s1) + ft_strlen(s2);
+	str = malloc(size * sizeof(char) + 1);
 	if (!str)
 		return (NULL);
-	tmp = 0;
-	while (s1[tmp] != '\0')
-	{
-		str[tmp] = s1[tmp];
-		tmp++;
-	}
-	tmp = 0;
-	while (s2[tmp] != '\0')
-	{
-		str[len + tmp] = s2[tmp];
-		tmp++;
-	}
-	str[tmp + len] = '\0';
+	i = 0;
+	j = 0;
+	while (s1[i])
+		str[j++] = s1[i++];
+	i = 0;
+	while (s2[i])
+		str[j++] = s2[i++];
+	str[j] = '\0';
 	return (str);
 }
-
 /*
 int main()
 {
