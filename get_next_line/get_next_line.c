@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gt-serst <gt-serst@student.42.fr>          +#+  +:+       +#+        */
+/*   By: geraudtserstevens <geraudtserstevens@st    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/15 15:56:37 by gt-serst          #+#    #+#             */
-/*   Updated: 2023/01/06 18:18:27 by gt-serst         ###   ########.fr       */
+/*   Updated: 2023/01/07 18:17:35 by geraudtsers      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,40 +62,24 @@ static char	*ft_check_end_of_file(char *str, int len)
 }
 */
 
-static char *ft_read_file(int fd, char *str, char **stack)
+static char *ft_read_file(int fd, char *stack)
 {
 	int		len;
 	char	buf[BUFFER_SIZE + 1];
 
 	len = 1;
-	while (!ft_strchr(*stack, '\n') && len > 0)
+	while (!ft_strchr(stack, '\n') && len > 0)
 	{
 		len = read(fd, buf, BUFFER_SIZE);
 		if (len == -1)
 		{
-			free(*stack);
-			free(str);
+			free(stack);
 			return (NULL);
 		}
 		buf[len] = '\0';
-		*stack = ft_strjoin(*stack, buf);
+		stack = ft_strjoin(stack, buf);
 	}
-	if (*stack == NULL)
-		return (NULL);
-	if (ft_strchr(*stack, '\n'))
-	{
-		str = ft_substr(*stack, 0, ft_strchr(*stack, '\n') + 1);
-		*stack = ft_substr(*stack, ft_strchr(*stack, '\n') + 1, ft_strlen(*stack));
-	}
-	else
-	{
-		//printf("Fin de fichier");
-		printf("stackfin:|%s|", *stack);
-		//str = ft_strjoin(str, *stack);
-		str[0] = 'a';
-		free(*stack);
-	}
-	return (str);
+	return (stack);
 }
 
 /*
@@ -124,26 +108,44 @@ static char	*ft_read_file(char *str, char **stack, int fd)
 	return (str);
 }
 */
+static char	*get_line(char *line, char *stack)
+{
+	free(line);
+	line = ft_substr(stack, 0, ft_strchr(stack, '\n') + 1);
+	return (line);
+}
+
+static char	*get_stack(char *stack)
+{
+	char	*tmp;
+
+	tmp = ft_substr(stack, ft_strchr(stack, '\n') + 1, ft_strlen(stack));
+	free(stack);
+	stack = tmp;
+	return (stack);
+}
 
 char	*get_next_line(int fd)
 {
-	char		*str;
+	char		*line;
 	static char	*stack;
+
 	if (fd < 0 || BUFFER_SIZE < 1)
 		return (NULL);
-	str = malloc(sizeof(char));
-	if (!str)
+	line = NULL;
+	stack = ft_read_file(fd, stack);
+	if (!stack || stack[0] == '\0')
 		return (NULL);
-	str[0] = '\0';
-	/*if (!stack)
+	if (ft_strchr(stack, '\n'))
 	{
-		stack = malloc(sizeof(char));
-		if (!stack)
-			return (NULL);
-		stack[0] = '\0';
-	}*/
-	str = ft_read_file(fd, str, &stack);
-	//printf("New line: %s\n", str);
-	//printf("Stack: %s\n", stack);
-	return (str);
+		line = get_line(line, stack);
+		stack = get_stack(stack);
+	}
+	else
+	{
+		line = ft_strjoin(line, stack);
+		free(stack);
+		stack = NULL;
+	}
+	return (line);
 }
