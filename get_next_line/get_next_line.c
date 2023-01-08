@@ -6,7 +6,7 @@
 /*   By: geraudtserstevens <geraudtserstevens@st    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/15 15:56:37 by gt-serst          #+#    #+#             */
-/*   Updated: 2023/01/07 18:17:35 by geraudtsers      ###   ########.fr       */
+/*   Updated: 2023/01/08 23:41:44 by geraudtsers      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ static char	*ft_check_end_of_file(char *str, int len)
 }
 */
 
-static char *ft_read_file(int fd, char *stack)
+static char *ft_read_bytes(int fd, char *stack)
 {
 	int		len;
 	char	buf[BUFFER_SIZE + 1];
@@ -108,14 +108,14 @@ static char	*ft_read_file(char *str, char **stack, int fd)
 	return (str);
 }
 */
-static char	*get_line(char *line, char *stack)
+static char	*ft_get_line(char *line, char *stack)
 {
-	free(line);
+	//free(line);
 	line = ft_substr(stack, 0, ft_strchr(stack, '\n') + 1);
 	return (line);
 }
 
-static char	*get_stack(char *stack)
+static char	*ft_get_stack(char *stack)
 {
 	char	*tmp;
 
@@ -133,13 +133,13 @@ char	*get_next_line(int fd)
 	if (fd < 0 || BUFFER_SIZE < 1)
 		return (NULL);
 	line = NULL;
-	stack = ft_read_file(fd, stack);
+	stack = ft_read_bytes(fd, stack);
 	if (!stack || stack[0] == '\0')
 		return (NULL);
 	if (ft_strchr(stack, '\n'))
 	{
-		line = get_line(line, stack);
-		stack = get_stack(stack);
+		line = ft_get_line(line, stack);
+		stack = ft_get_stack(stack);
 	}
 	else
 	{

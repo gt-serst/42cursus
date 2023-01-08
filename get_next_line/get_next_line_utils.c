@@ -6,7 +6,7 @@
 /*   By: geraudtserstevens <geraudtserstevens@st    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/12 13:01:12 by gt-serst          #+#    #+#             */
-/*   Updated: 2023/01/07 16:49:59 by geraudtsers      ###   ########.fr       */
+/*   Updated: 2023/01/08 23:06:56 by geraudtsers      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,29 @@ char	*ft_substr(char *s, unsigned int start, int len)
 	return (substr);
 }
 
+char	*ft_strdup(const char *s1)
+{
+	int		tmp;
+	char	*ptr;
+
+	if (!s1)
+		return (NULL);
+	tmp = 0;
+	while (s1[tmp] != '\0')
+		tmp++;
+	ptr = malloc(sizeof(char) * (tmp + 1));
+	if (!ptr)
+		return (NULL);
+	tmp = 0;
+	while (s1[tmp] != '\0')
+	{
+		ptr[tmp] = s1[tmp];
+		tmp++;
+	}
+	ptr[tmp] = '\0';
+	return (ptr);
+}
+
 char	*ft_strjoin(char *s1, char *s2)
 {
 	char	*str;
@@ -79,12 +102,7 @@ char	*ft_strjoin(char *s1, char *s2)
 	int		j;
 
 	if (!s1)
-	{
-		s1 = malloc(sizeof(char));
-		if (!s1)
-			return (NULL);
-		s1[0] = '\0';
-	}
+		s1 = ft_strdup("");
 	if (!s1 || !s2)
 		return (NULL);
 	size = ft_strlen(s1) + ft_strlen(s2);
