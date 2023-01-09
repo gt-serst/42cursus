@@ -3,66 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: geraudtserstevens <geraudtserstevens@st    +#+  +:+       +#+        */
+/*   By: gt-serst <gt-serst@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/15 15:56:37 by gt-serst          #+#    #+#             */
-/*   Updated: 2023/01/08 23:41:44 by geraudtsers      ###   ########.fr       */
+/*   Updated: 2023/01/09 15:55:11 by gt-serst         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-/*
-static char	*ft_get_line(char *str, char *stack)
-{
-	char	*substr;
-
-	if (!ft_strchr(stack, '\n'))
-	{
-		str = ft_strjoin(str, stack);
-	}
-	else
-	{
-		substr = ft_substr(stack, 0, ft_strchr(stack, '\n') - stack + 1);
-		free(str);
-		str = substr;
-	}
-	return (str);
-}
-
-static char	*ft_get_stack(char *stack)
-{
-	char	*substr;
-
-	if (!ft_strchr(stack, '\n'))
-	{
-		free(stack);
-		stack = NULL;
-	}
-	else
-	{
-		substr = ft_substr(stack, ft_strchr(stack, '\n') - stack + 1,
-				ft_strlen(stack));
-		free(stack);
-		stack = substr;
-	}
-	return (stack);
-}
-*/
-
-/*
-static char	*ft_check_end_of_file(char *str, int len)
-{
-	if (!(*str) && len == -1)
-	{
-		free(str);
-		return (NULL);
-	}
-	return (str);
-}
-*/
-
-static char *ft_read_bytes(int fd, char *stack)
+static char	*ft_get_bytes(int fd, char *stack)
 {
 	int		len;
 	char	buf[BUFFER_SIZE + 1];
@@ -82,46 +32,41 @@ static char *ft_read_bytes(int fd, char *stack)
 	return (stack);
 }
 
-/*
-static char	*ft_read_file(char *str, char **stack, int fd)
+static char	*ft_get_line(char *stack)
 {
-	int		len;
-	char	buf[BUFFER_SIZE + 1];
+	char	*line;
 	char	*substr;
 
-	len = read(fd, buf, BUFFER_SIZE);
-	if (len <= 0)
-		return (ft_check_end_of_file(str, len));
-	buf[len] = '\0';
-	if (ft_check_next_line(buf) == 0)
+	line = malloc(sizeof(char));
+	if (!line)
+		return (NULL);
+	line[0] = '\0';
+	if (ft_strchr(stack, '\n'))
 	{
-		str = ft_strjoin(str, buf);
-		str = ft_read_file(str, stack, fd);
+		substr = ft_substr(stack, 0, ft_strchr(stack, '\n'));
+		free(line);
+		line = substr;
 	}
 	else
-	{
-		substr = ft_substr(buf, 0, ft_check_next_line(buf));
-		str = ft_strjoin(str, substr);
-		free(substr);
-		*stack = ft_substr(buf, ft_check_next_line(buf), BUFFER_SIZE);
-	}
-	return (str);
-}
-*/
-static char	*ft_get_line(char *line, char *stack)
-{
-	//free(line);
-	line = ft_substr(stack, 0, ft_strchr(stack, '\n') + 1);
+		line = ft_strjoin(line, stack);
 	return (line);
 }
 
 static char	*ft_get_stack(char *stack)
 {
-	char	*tmp;
+	char	*substr;
 
-	tmp = ft_substr(stack, ft_strchr(stack, '\n') + 1, ft_strlen(stack));
-	free(stack);
-	stack = tmp;
+	if (ft_strchr(stack, '\n'))
+	{
+		substr = ft_substr(stack, ft_strchr(stack, '\n'), ft_strlen(stack));
+		free(stack);
+		stack = substr;
+	}
+	else
+	{
+		free(stack);
+		stack = NULL;
+	}
 	return (stack);
 }
 
@@ -132,20 +77,35 @@ char	*get_next_line(int fd)
 
 	if (fd < 0 || BUFFER_SIZE < 1)
 		return (NULL);
-	line = NULL;
-	stack = ft_read_bytes(fd, stack);
-	if (!stack || stack[0] == '\0')
+	stack = ft_get_bytes(fd, stack);
+	if (!stack)
 		return (NULL);
-	if (ft_strchr(stack, '\n'))
-	{
-		line = ft_get_line(line, stack);
-		stack = ft_get_stack(stack);
-	}
+	if (stack[0] == '\0')
+		line = NULL;
 	else
-	{
-		line = ft_strjoin(line, stack);
-		free(stack);
-		stack = NULL;
-	}
+		line = ft_get_line(stack);
+	stack = ft_get_stack(stack);
 	return (line);
 }
+
+/*
+int	main(void)
+{
+	int		fd;
+	int		i;
+	char	*content;
+	char	*name;
+
+	name = "lines_around_10.txt";
+	fd = open(name, O_RDONLY);
+	i = 0;
+	while (i < 10)
+	{
+		content = get_next_line(fd);
+		printf("New line in main: %s\n", content);
+		free(content);
+		i++;
+	}
+	return (0);
+}
+*/
