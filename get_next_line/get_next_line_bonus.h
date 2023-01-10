@@ -6,17 +6,21 @@
 /*   By: gt-serst <gt-serst@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/09 14:37:56 by gt-serst          #+#    #+#             */
-/*   Updated: 2023/01/09 15:56:48 by gt-serst         ###   ########.fr       */
+/*   Updated: 2023/01/10 12:07:36 by gt-serst         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef GET_NEXT_LINE_BONUS_H
 # define GET_NEXT_LINE_BONUS_H
-# define OPEN_MAX 10240
+
+# ifndef BUFFER_SIZE
+#  define BUFFER_SIZE 1000
+# endif
 
 # include <stdlib.h>
 # include <unistd.h>
 # include <fcntl.h>
+# include <limits.h>
 
 char	*get_next_line(int fd);
 size_t	ft_strlen(char *s);

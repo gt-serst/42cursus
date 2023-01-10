@@ -6,7 +6,7 @@
 /*   By: gt-serst <gt-serst@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/09 14:37:21 by gt-serst          #+#    #+#             */
-/*   Updated: 2023/01/09 14:38:34 by gt-serst         ###   ########.fr       */
+/*   Updated: 2023/01/10 12:04:35 by gt-serst         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,7 +103,10 @@ char	*ft_strjoin(char *s1, char *s2)
 		return (NULL);
 	str = malloc(sizeof(char) * (ft_strlen(s1) + ft_strlen(s2) + 1));
 	if (!str)
+	{
+		free(s1);
 		return (NULL);
+	}
 	i = 0;
 	j = 0;
 	while (s1[i])
