@@ -6,19 +6,24 @@
 /*   By: gt-serst <gt-serst@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/10 16:03:34 by gt-serst          #+#    #+#             */
-/*   Updated: 2023/01/10 19:46:12 by gt-serst         ###   ########.fr       */
+/*   Updated: 2023/01/11 13:46:51 by gt-serst         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 
-int	ft_print_memory(void *addr)
+int	ft_recursive(unsigned long nbr, char *base, int len)
 {
-	char	*str;
+	int	count;
 
-	str = (char*)addr;
-	printf("%p\n", (void*)str);
-	return (0);
+	count = 0;
+	if (nbr < (unsigned long)len)
+	{
+		write(1, &base[nbr], 1);
+		return (1);
+	}
+	count = ft_recursive(nbr / len, base, len);
+	return (count + ft_recursive(nbr % len, base, len));
 }
 
 int	ft_printf(const char *format, ...)
@@ -35,7 +40,15 @@ int	ft_printf(const char *format, ...)
 		else if (*format == 's')
 			ft_putstr(va_arg(args, char*));
 		else if (*format == 'p')
-			ft_print_memory(va_arg(args, void*));
+		{
+			ft_putnbr(0);
+			ft_putchar('x');
+			ft_recursive(va_arg(args, unsigned long), "0123456789abcdef", 16);
+		}
+		else if (*format == 'd')
+			ft_putnbr(va_arg(args, int));
+		else if (*format == 'i')
+			ft_recursive(va_arg(args, unsigned long), "0123456789", 10);
 		format++;
 	}
 	va_end(args);
@@ -50,8 +63,6 @@ int	main()
 	x = 5;
 	p = &x;
 	printf("%p\n", p);
-	printf("%p\n", &x);
-	ft_printf("%c%s%p", 'f', "salut", p);
+	ft_printf("%c%s%p%d%i", 'f', "salut", p, 06, 0x12);
 	return (0);
 }
-
